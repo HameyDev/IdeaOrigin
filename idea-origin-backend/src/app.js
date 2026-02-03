@@ -6,6 +6,10 @@ import morgan from "morgan";
 import path from "path";
 
 import authRoutes from "./routes/authRoutes.js";
+import scientistRoutes from "./routes/scientistRoutes.js";
+import discoveryRoutes from "./routes/discoveryRoutes.js";
+import discoveryStoryRoutes from "./routes/discoveryStoryRoutes.js";
+
 
 const app = express();
 
@@ -18,9 +22,13 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads"), {
   setHeaders: (res, path) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", "*");
   }
 }));
+app.use("/api/scientists", scientistRoutes);
+app.use("/api/discoveries", discoveryRoutes);
+app.use("/api/discovery-stories", discoveryStoryRoutes);
+
 
 // Test route
 app.get("/", (req, res) => {

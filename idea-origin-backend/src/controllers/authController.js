@@ -49,7 +49,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-    res.status(200).json({ message: "Login successfull", token, user: { id: user._id, name: user.name, email: user.email, role: user.role }, });
+    res.status(200).json({ message: "Login successfull", token, user: { id: user._id, name: user.name, email: user.email, role: user.role, avatar: user.avatar }, });
 
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -88,5 +88,36 @@ export const updateProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Profile update failed" });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const user = await User.findById(userId).select("+password");
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
   }
 };
