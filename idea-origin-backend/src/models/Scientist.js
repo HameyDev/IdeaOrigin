@@ -18,10 +18,10 @@ const scientistSchema = new mongoose.Schema(
     quotes: { type: [String], default: [] },
     funFacts: { type: [String], default: [] },
 
-    // Reference to discoveries
-    discoveries: [{ type: mongoose.Schema.Types.ObjectId, ref: "Discovery" }],
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Scientist", scientistSchema);
+const Scientist = mongoose.model("Scientist", scientistSchema);
+
+export default Scientist;

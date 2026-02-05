@@ -1,32 +1,139 @@
 import { Discovery } from "../models/Discovery.js";
+import  Scientist  from "../models/Scientist.js";
 
-// Get all discoveries
+/**
+ * GET all discoveries
+ * GET /api/discoveries
+ */
 export const getAllDiscoveries = async (req, res) => {
   try {
-    const discoveries = await Discovery.find({});
-    res.status(200).json({ success: true, data: discoveries });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    const discoveries = await Discovery.find()
+      .populate("scientistId", "name field image")
+      .sort({ year: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: discoveries.length,
+      data: discoveries,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Get single discovery by id
+/**
+ * GET single discovery by ID
+ * GET /api/discoveries/:id
+ */
 export const getDiscoveryById = async (req, res) => {
   try {
-    const discovery = await Discovery.findOne({ id: req.params.id });
-    if (!discovery) return res.status(404).json({ success: false, message: "Discovery not found" });
+    const { id } = req.params;
+
+    const discovery = await Discovery.findById(id).populate(
+      "scientistId",
+      "name field image bio"
+    );
+
+    if (!discovery) {
+      return res.status(404).json({ success: false, message: "Discovery not found" });
+    }
+
     res.status(200).json({ success: true, data: discovery });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Get discoveries by scientistId
+/**
+ * GET discoveries by scientist
+ * GET /api/discoveries/scientist/:scientistId
+ */
 export const getDiscoveriesByScientist = async (req, res) => {
   try {
-    const discoveries = await Discovery.find({ scientistId: req.params.scientistId });
-    res.status(200).json({ success: true, data: discoveries });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    const { scientistId } = req.params;
+
+    const discoveries = await Discovery.find({ scientistId }).sort({ year: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: discoveries.length,
+      data: discoveries,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * CREATE discovery
+ * POST /api/discoveries
+ */
+export const createDiscovery = async (req, res) => {
+  try {
+    const { scientistId } = req.body;
+
+    // Check scientist exists
+    const scientist = await Scientist.findById(scientistId);
+    if (!scientist) {
+      return res.status(404).json({ success: false, message: "Scientist not found" });
+    }
+
+    const newDiscovery = new Discovery(req.body);
+    await newDiscovery.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Discovery created successfully",
+      data: newDiscovery,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * UPDATE discovery
+ * PUT /api/discoveries/:id
+ */
+export const updateDiscovery = async (req, res) => {
+  try {
+    const updated = await Discovery.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Discovery not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Discovery updated",
+      data: updated,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * DELETE discovery
+ * DELETE /api/discoveries/:id
+ */
+export const deleteDiscovery = async (req, res) => {
+  try {
+    const deleted = await Discovery.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Discovery not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Discovery deleted",
+      data: deleted,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

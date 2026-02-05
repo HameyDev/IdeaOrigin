@@ -117,18 +117,25 @@ export default function Explore() {
     <div className="bg-gradient-to-b from-black via-[#14132A] to-black text-white min-h-screen px-4 lg:px-10 py-10">
 
       {/* ================= HEADER ================= */}
-      <motion.section
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-10"
-      >
-        <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">
+      <div className="max-w-6xl mx-auto mb-6 flex flex-col items-center">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400"
+        >
           Explore Discoveries
-        </h1>
-        <p className="mt-4 text-gray-400 max-w-3xl mx-auto">
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="mt-4 text-gray-400 max-w-3xl mx-auto"
+        >
           Browse scientific discoveries by field and historical period.
-        </p>
-      </motion.section>
+        </motion.p>
+      </div>
+
 
       {/* ================= SEARCH ================= */}
       <div className="flex gap-4 max-w-7xl mx-auto mb-8">

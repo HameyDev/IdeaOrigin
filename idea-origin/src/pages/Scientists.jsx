@@ -112,7 +112,7 @@ export default function Scientists() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-4xl font-bold text-center lg:text-left"
+          className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400"
         >
           All Scientists
         </motion.h1>
@@ -120,7 +120,7 @@ export default function Scientists() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.6 }}
-          className="text-gray-400 mt-2 text-center lg:text-left"
+          className="mt-4 text-gray-400 max-w-3xl mx-auto"
         >
           Discover the great minds of history.
         </motion.p>
