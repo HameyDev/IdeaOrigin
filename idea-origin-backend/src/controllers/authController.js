@@ -2,9 +2,6 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import fs from "fs";
-import path from "path";
-
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -119,5 +116,71 @@ export const changePassword = async (req, res) => {
     res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+
+    res.json({
+      count: users.length,
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await user.deleteOne();
+
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Delete failed" });
+  }
+};
+
+export const updateUserByAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, role } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) user.name = name;
+
+    if (role) {
+      if (!["admin", "user"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+      }
+      user.role = role;
+    }
+
+    await user.save();
+
+    res.json({
+      message: "User updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Update failed" });
   }
 };

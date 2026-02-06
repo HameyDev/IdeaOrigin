@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
+import CustomToaster from "../components/CustomToaster";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -44,12 +46,16 @@ export default function Auth() {
           password,
         });
 
-        setIsLogin(true);
+        toast.success("Signup successful! Please login.");
+
         setFullName("");
         setEmail("");
         setPassword("");
         setConfirmPassword("");
-        alert("Signup successful. Please login.");
+
+        setTimeout(() => {
+          setIsLogin(true);
+        }, 1200);
       } else {
         const res = await axios.post(
           "http://localhost:5000/api/auth/login",
@@ -63,17 +69,22 @@ export default function Auth() {
         // ✅ UPDATE CONTEXT
         login(res.data.user);
 
-        // ✅ REDIRECT
-        navigate("/dashboard");
+        toast.success("Login successful!");
+
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1200);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+      toast.error(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <CustomToaster />
 
       {/* Background Glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-950/10 to-slate-500/10 blur-3xl animate-pulse-slow pointer-events-none"></div>

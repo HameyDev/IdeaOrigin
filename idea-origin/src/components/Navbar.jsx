@@ -1,23 +1,16 @@
 import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import NavLink from "./NavLink";
 import DropdownLink from "./DropdownLink";
 import MobileLink from "./MobileLink";
 import GradientButton from "../components/GradientButton";
 import { AuthContext } from "../context/AuthContext";
 
-
-
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExploreOpen, setIsExploreOpen] = useState(false);
 
-  const navigate = useNavigate();
-
-  // 🔐 AUTH
-  const { isLoggedIn } = useContext(AuthContext);
-
-  
+  const { user, isLoggedIn } = useContext(AuthContext);
 
   return (
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-slate-950 via-teal-950 to-slate-950 backdrop-blur-xl border-b border-white/10 shadow-lg">
@@ -61,13 +54,24 @@ export default function Navbar() {
           <NavLink to="/about">About</NavLink>
 
           {/* 🔐 AUTH BUTTONS */}
-          {!isLoggedIn && (
-            <NavLink to="/auth">Login</NavLink>
-          )}
+          {!isLoggedIn && <NavLink to="/auth">Login</NavLink>}
 
           {isLoggedIn && (
             <>
-              <GradientButton to="/dashboard">Dashboard</GradientButton>
+              {/* Normal Dashboard for all users */}
+              
+              {user?.role === "user" && (
+                <GradientButton to="/dashboard">Dashboard</GradientButton>
+              )}
+
+              {user?.role === "admin" && (
+                <NavLink to="/dashboard">Dashboard</NavLink>
+              )}
+
+              {/* Admin Dashboard only for admins */}
+              {user?.role === "admin" && (
+                <GradientButton to="/admin">Admin Dashboard</GradientButton>
+              )}
             </>
           )}
         </div>
@@ -83,20 +87,18 @@ export default function Navbar() {
       {/* ================= MOBILE MENU ================= */}
       {isOpen && (
         <div className="md:hidden bg-slate-950 border-t border-white/10 px-6 pb-6 space-y-4">
-
           <MobileLink to="/" setIsOpen={setIsOpen}>Home</MobileLink>
           <MobileLink to="/timeline" setIsOpen={setIsOpen}>Timeline</MobileLink>
           <MobileLink to="/about" setIsOpen={setIsOpen}>About</MobileLink>
 
-          {!isLoggedIn && (
-            <MobileLink to="/auth" setIsOpen={setIsOpen}>Login</MobileLink>
-          )}
+          {!isLoggedIn && <MobileLink to="/auth" setIsOpen={setIsOpen}>Login</MobileLink>}
 
           {isLoggedIn && (
             <>
-              <MobileLink to="/dashboard" setIsOpen={setIsOpen}>
-                Dashboard
-              </MobileLink>
+              <MobileLink to="/dashboard" setIsOpen={setIsOpen}>Dashboard</MobileLink>
+              {user?.role === "admin" && (
+                <MobileLink to="/admin" setIsOpen={setIsOpen}>Admin Dashboard</MobileLink>
+              )}
             </>
           )}
         </div>
