@@ -7,6 +7,8 @@ const scientistSchema = new mongoose.Schema(
     image: { type: String },
 
     tagline: { type: String },
+    description: { type: String },   // <-- added here
+
     era: { type: String },
     nationality: { type: String },
     born: { type: String },
@@ -17,7 +19,6 @@ const scientistSchema = new mongoose.Schema(
     impact: { type: [String], default: [] },
     quotes: { type: [String], default: [] },
     funFacts: { type: [String], default: [] },
-
   },
   { timestamps: true }
 );
