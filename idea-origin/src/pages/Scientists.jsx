@@ -288,7 +288,7 @@ export default function Scientists() {
               {paginated.map((sci) => (
                 <FeaturedCard
                   key={sci.id}
-                  to={`/scientist/${sci.id}`}
+                  to={`/scientist/${sci._id}`}
                   image={sci.image}
                   title={sci.name}
                   subtitle={sci.field}

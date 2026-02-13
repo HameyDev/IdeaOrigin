@@ -8,6 +8,8 @@ export default function ScientistProfile() {
   const { id } = useParams();
   const [scientist, setScientist] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [discoveries, setDiscoveries] = useState([]);
+
 
   useEffect(() => {
     axios
@@ -18,6 +20,32 @@ export default function ScientistProfile() {
       })
       .catch(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const sciRes = await axios.get(
+          `http://localhost:5000/api/scientists/${id}`
+        );
+        setScientist(sciRes.data.data);
+
+        // 🔥 fetch discoveries of this scientist
+        const disRes = await axios.get(
+          `http://localhost:5000/api/discoveries/scientist/${id}`
+        );
+        setDiscoveries(disRes.data.data);
+
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  console.log(discoveries);
+
 
   if (loading) {
     return (
@@ -131,7 +159,7 @@ export default function ScientistProfile() {
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {(scientist.discoveries || []).map((d) => (
+              {discoveries.map((d) => (
                 <Link
                   key={d.id}
                   to={`/discovery/${d.id}`}
