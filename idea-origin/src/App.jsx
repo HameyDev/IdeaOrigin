@@ -9,7 +9,7 @@ import About from "./pages/About";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Scientists from "./pages/Scientists";
-import Admin from "./pages/Admin";
+import AdminLayout from "./pages/admin/AdminLayout"
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -19,9 +19,20 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
+import Users from "./pages/admin/Users";
+import ScientistsAdmin from "./pages/admin/Scientists";
+import CreateScientist from "./pages/admin/CreateScientist";
+import Discoveries from "./pages/admin/Discoveries";
+import CreateDiscovery from "./pages/admin/CreateDiscovery";
+import Stories from "./pages/admin/Stories";
+import CreateStory from "./pages/admin/CreateStory";
+
+import CustomToaster from "./components/CustomToaster";
+
 function App() {
   return (
     <AuthProvider>
+      <CustomToaster />
       <ScrollToTop />
       <Navbar />
 
@@ -51,10 +62,21 @@ function App() {
           path="/admin"
           element={
             <AdminRoute>
-              <Admin />
+              <AdminLayout />
             </AdminRoute>
           }
-        />
+        >
+          <Route index element={<Users />} />
+
+          <Route path="scientists" element={<ScientistsAdmin />} />
+          <Route path="create-scientist" element={<CreateScientist />} />
+
+          <Route path="discoveries" element={<Discoveries />} />
+          <Route path="create-discovery" element={<CreateDiscovery />} />
+
+          <Route path="stories" element={<Stories />} />
+          <Route path="create-story" element={<CreateStory />} />
+        </Route>
       </Routes>
 
       <Footer />

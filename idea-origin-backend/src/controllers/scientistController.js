@@ -1,4 +1,4 @@
-import Scientist  from "../models/Scientist.js";
+import Scientist from "../models/Scientist.js";
 import { Discovery } from "../models/Discovery.js";
 
 /**
@@ -54,7 +54,14 @@ export const getScientistById = async (req, res) => {
  */
 export const createScientist = async (req, res) => {
   try {
-    const newScientist = new Scientist(req.body);
+    const data = { ...req.body };
+
+    // If image uploaded via multer
+    if (req.file) {
+      data.image = `/uploads/scientists/${req.file.filename}`;
+    }
+
+    const newScientist = new Scientist(data);
     await newScientist.save();
 
     res.status(201).json({
@@ -67,6 +74,7 @@ export const createScientist = async (req, res) => {
   }
 };
 
+
 /**
  * UPDATE a scientist
  * PUT /api/scientists/:id
@@ -74,8 +82,13 @@ export const createScientist = async (req, res) => {
 export const updateScientist = async (req, res) => {
   try {
     const { id } = req.params;
+    const data = { ...req.body };
 
-    const updatedScientist = await Scientist.findByIdAndUpdate(id, req.body, {
+    if (req.file) {
+      data.image = `/uploads/scientists/${req.file.filename}`;
+    }
+
+    const updatedScientist = await Scientist.findByIdAndUpdate(id, data, {
       new: true,
       runValidators: true,
     });
@@ -93,6 +106,7 @@ export const updateScientist = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 /**
  * DELETE a scientist

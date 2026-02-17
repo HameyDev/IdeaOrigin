@@ -289,7 +289,7 @@ export default function Scientists() {
                 <FeaturedCard
                   key={sci.id}
                   to={`/scientist/${sci._id}`}
-                  image={sci.image}
+                  image={`http://localhost:5000${sci.image}`}
                   title={sci.name}
                   subtitle={sci.field}
                   description={sci.description || "Explore the life, discoveries, and legacy of this scientist."}

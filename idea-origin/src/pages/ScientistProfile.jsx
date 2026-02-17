@@ -7,45 +7,37 @@ import GradientButton from "../components/GradientButton";
 export default function ScientistProfile() {
   const { id } = useParams();
   const [scientist, setScientist] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [discoveries, setDiscoveries] = useState([]);
-
-
-  useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/scientists/${id}`)
-      .then((res) => {
-        setScientist(res.data.data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [id]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sciRes = await axios.get(
-          `http://localhost:5000/api/scientists/${id}`
-        );
-        setScientist(sciRes.data.data);
+        // Fetch scientist details
+        const sciRes = await axios.get(`http://localhost:5000/api/scientists/${id}`);
+        const sciData = sciRes.data.data;
 
-        // 🔥 fetch discoveries of this scientist
-        const disRes = await axios.get(
-          `http://localhost:5000/api/discoveries/scientist/${id}`
-        );
+        // Convert arrays to single-line strings
+        sciData.story = sciData.story?.join(" ") || "";
+        sciData.impact = sciData.impact?.join(", ") || "";
+        sciData.quotes = sciData.quotes?.join(" | ") || "";
+        sciData.funFacts = sciData.funFacts?.join(", ") || "";
+
+        setScientist(sciData);
+
+        // Fetch discoveries of this scientist
+        const disRes = await axios.get(`http://localhost:5000/api/discoveries/scientist/${id}`);
         setDiscoveries(disRes.data.data);
 
         setLoading(false);
       } catch (err) {
+        console.error(err);
         setLoading(false);
       }
     };
 
     fetchData();
   }, [id]);
-
-  console.log(discoveries);
-
 
   if (loading) {
     return (
@@ -54,8 +46,6 @@ export default function ScientistProfile() {
       </div>
     );
   }
-
-  console.log(scientist);
 
   if (!scientist) {
     return (
@@ -83,15 +73,13 @@ export default function ScientistProfile() {
         <p className="mt-4 text-cyan-400 text-lg">{scientist.field}</p>
 
         <p className="mt-6 max-w-2xl mx-auto text-gray-300 text-lg italic">
-          {scientist.tagline ||
-            "A mind that reshaped how humanity understands reality."}
+          {scientist.tagline || "A mind that reshaped how humanity understands reality."}
         </p>
       </section>
 
       {/* ================= PROFILE CARD ================= */}
       <section className="max-w-6xl mx-auto px-4 sm:px-8">
         <div className="bg-slate-900/70 backdrop-blur-xl rounded-3xl p-6 sm:p-10 border border-white/10 shadow-2xl">
-          {/* IMAGE + FACTS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
             {/* IMAGE */}
             <div
@@ -99,7 +87,8 @@ export default function ScientistProfile() {
                    transition-all duration-300 "
             >
               <img
-                src={scientist.image}
+                src={`http://localhost:5000${scientist.image}`}
+                crossOrigin="anonymous"
                 alt={scientist.name}
                 className="w-full h-80 object-cover"
               />
@@ -107,7 +96,6 @@ export default function ScientistProfile() {
 
             {/* QUICK FACTS */}
             <div className="md:col-span-2 space-y-6">
-              {/* ROW WITH 2 COLUMNS */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[
                   ["Born", scientist.born],
@@ -126,7 +114,6 @@ export default function ScientistProfile() {
                     <p className="md:text-md sm:text-xl font-bold text-white group-hover:text-cyan-400 transition">
                       {value || "N/A"}
                     </p>
-                    {/* subtle glowing accent */}
                     <div className="absolute -bottom-2 w-12 h-1 bg-cyan-400/50 rounded-full animate-pulse"></div>
                   </div>
                 ))}
@@ -141,15 +128,12 @@ export default function ScientistProfile() {
 
           {/* ================= LIFE STORY ================= */}
           <div className="mt-16">
-            <h2 className="text-3xl font-bold text-cyan-400 mb-6">
+            <h2 className="text-3xl font-bold text-cyan-400 mb-2">
               Life & Journey
             </h2>
-
-            <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
-              {(scientist.story || []).map((para, i) => (
-                <p key={i}>{para}</p>
-              ))}
-            </div>
+            <p className="text-gray-300 leading-relaxed text-lg">
+              {scientist.story}
+            </p>
           </div>
 
           {/* ================= DISCOVERIES ================= */}
@@ -161,8 +145,8 @@ export default function ScientistProfile() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {discoveries.map((d) => (
                 <Link
-                  key={d.id}
-                  to={`/discovery/${d.id}`}
+                  key={d._id}
+                  to={`/discovery/${d._id}`}
                   className="group bg-slate-900/80 p-6 rounded-2xl
                   border border-white/10 hover:border-cyan-400
                   hover:shadow-[0_0_30px_rgba(34,211,238,0.25)]
@@ -182,46 +166,26 @@ export default function ScientistProfile() {
 
           {/* ================= IMPACT ================= */}
           <div className="mt-20">
-            <h2 className="text-3xl font-bold text-cyan-400 mb-6">
+            <h2 className="text-3xl font-bold text-cyan-400 mb-2">
               Impact & Legacy
             </h2>
-
-            <ul className="space-y-3 text-gray-300 text-lg">
-              {(scientist.impact || []).map((item, i) => (
-                <li key={i}>• {item}</li>
-              ))}
-            </ul>
+            <p className="text-gray-300 text-lg">{scientist.impact}</p>
           </div>
 
           {/* ================= QUOTES ================= */}
           <div className="mt-20">
-            <h2 className="text-3xl font-bold text-cyan-400 mb-6">
+            <h2 className="text-3xl font-bold text-cyan-400 mb-2">
               Famous Quotes
             </h2>
-
-            <div className="space-y-6">
-              {(scientist.quotes || []).map((quote, i) => (
-                <blockquote
-                  key={i}
-                  className="border-l-4 border-cyan-400 pl-6 italic text-gray-200 text-lg"
-                >
-                  “{quote}”
-                </blockquote>
-              ))}
-            </div>
+            <p className="text-gray-300 text-lg italic">{scientist.quotes}</p>
           </div>
 
           {/* ================= FUN FACTS ================= */}
           <div className="mt-20">
-            <h2 className="text-3xl font-bold text-emerald-400 mb-6">
+            <h2 className="text-3xl font-bold text-emerald-400 mb-2">
               Fun Facts
             </h2>
-
-            <ul className="list-disc list-inside text-gray-300 text-lg space-y-2">
-              {(scientist.funFacts || []).map((fact, i) => (
-                <li key={i}>{fact}</li>
-              ))}
-            </ul>
+            <p className="text-gray-300 text-lg">{scientist.funFacts}</p>
           </div>
 
           {/* ================= CTA ================= */}

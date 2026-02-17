@@ -29,6 +29,7 @@ export default function FeaturedCard({
         <div className="relative h-[160px] overflow-hidden shrink-0">
           <img
             src={image}
+            crossOrigin="anonymous"
             alt={title}
             className="w-full h-full object-cover
                        group-hover:scale-110

@@ -1,39 +1,21 @@
-import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { discoveries } from "../data/Discoveries";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiOutlineFilter } from "react-icons/hi";
 import FilterSidebar from "../components/FilterSidebar";
-
 import FeaturedCard from "../components/FeaturedCard";
 
 /* =======================
    SCIENCE FIELDS
 ======================= */
 const fields = [
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "Mathematics",
-  "Astronomy",
-  "Cosmology",
-  "Computer Science",
-  "Artificial Intelligence",
-  "Engineering",
-  "Mechanical Engineering",
-  "Electrical Engineering",
-  "Civil Engineering",
-  "Materials Science",
-  "Medicine",
-  "Neuroscience",
-  "Psychology",
-  "Environmental Science",
-  "Earth Science",
-  "Energy Science",
-  "Nuclear Science",
-  "Particle Physics",
-  "Quantum Science",
-  "Space Exploration",
+  "Physics", "Chemistry", "Biology", "Mathematics", "Astronomy", "Cosmology",
+  "Computer Science", "Artificial Intelligence", "Engineering",
+  "Mechanical Engineering", "Electrical Engineering", "Civil Engineering",
+  "Materials Science", "Medicine", "Neuroscience", "Psychology",
+  "Environmental Science", "Earth Science", "Energy Science", "Nuclear Science",
+  "Particle Physics", "Quantum Science", "Space Exploration",
 ];
 
 /* =======================
@@ -50,6 +32,9 @@ const yearRanges = {
 
 export default function Explore() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [discoveries, setDiscoveries] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   /* =======================
@@ -90,12 +75,31 @@ export default function Explore() {
   };
 
   /* =======================
+     FETCH FROM BACKEND
+  ======================= */
+  useEffect(() => {
+    const fetchDiscoveries = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get("http://localhost:5000/api/discoveries");
+        setDiscoveries(res.data.data || []);
+      } catch (err) {
+        console.error("Failed to fetch discoveries:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDiscoveries();
+  }, []);
+
+  /* =======================
      FILTER LOGIC
   ======================= */
   const filtered = discoveries.filter((d) => {
     const matchSearch =
       d.title.toLowerCase().includes(search.toLowerCase()) ||
-      d.scientist.toLowerCase().includes(search.toLowerCase());
+      d.scientistId?.name.toLowerCase().includes(search.toLowerCase());
 
     const matchField =
       selectedFields.length === 0 || selectedFields.includes(d.field);
@@ -115,7 +119,7 @@ export default function Explore() {
 
   return (
     <div className="bg-gradient-to-b from-black via-[#14132A] to-black text-white min-h-screen px-4 lg:px-10 py-10">
-
+      
       {/* ================= HEADER ================= */}
       <div className="max-w-6xl mx-auto mb-6 flex flex-col items-center">
         <motion.h1
@@ -130,12 +134,11 @@ export default function Explore() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.6 }}
-          className="mt-4 text-gray-400 max-w-3xl mx-auto"
+          className="mt-4 text-gray-400 max-w-3xl mx-auto text-center"
         >
           Browse scientific discoveries by field and historical period.
         </motion.p>
       </div>
-
 
       {/* ================= SEARCH ================= */}
       <div className="flex gap-4 max-w-7xl mx-auto mb-8">
@@ -226,18 +229,27 @@ export default function Explore() {
               transition={{ duration: 0.3 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center"
             >
-              {paginated.map((sci) => (
-                <FeaturedCard
-                  key={sci.id}
-                  to={`/discovery/${sci.id}`}
-                  image={sci.image}
-                  title={sci.title}
-                  subtitle={sci.field}
-                  description={sci.desc}
-                  cta="View Profile →"
-                />
-              ))}
-
+              {loading ? (
+                <p className="text-gray-400 col-span-full text-center">
+                  Loading...
+                </p>
+              ) : paginated.length === 0 ? (
+                <p className="text-gray-400 col-span-full text-center">
+                  No discoveries found.
+                </p>
+              ) : (
+                paginated.map((sci) => (
+                  <FeaturedCard
+                    key={sci._id}
+                    to={`/discovery/${sci._id}`}
+                    image={`http://localhost:5000${sci.image}`}
+                    title={sci.title}
+                    subtitle={sci.field}
+                    description={sci.shortDescription}
+                    cta="View Profile →"
+                  />
+                ))
+              )}
             </motion.div>
           </AnimatePresence>
 

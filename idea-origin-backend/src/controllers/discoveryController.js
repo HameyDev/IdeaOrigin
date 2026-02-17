@@ -1,5 +1,8 @@
+import multer from "multer";
+import path from "path";
+
 import { Discovery } from "../models/Discovery.js";
-import  Scientist  from "../models/Scientist.js";
+import Scientist from "../models/Scientist.js";
 
 /**
  * GET all discoveries
@@ -70,15 +73,28 @@ export const getDiscoveriesByScientist = async (req, res) => {
  */
 export const createDiscovery = async (req, res) => {
   try {
-    const { scientistId } = req.body;
+    const { title, field, year, shortDescription, scientistId } = req.body;
 
-    // Check scientist exists
+    if (!scientistId) {
+      return res.status(400).json({ success: false, message: "ScientistId is required" });
+    }
+
     const scientist = await Scientist.findById(scientistId);
     if (!scientist) {
       return res.status(404).json({ success: false, message: "Scientist not found" });
     }
 
-    const newDiscovery = new Discovery(req.body);
+    const image = req.file ? `/uploads/discoveries/${req.file.filename}` : "";
+
+    const newDiscovery = new Discovery({
+      title,
+      field,
+      year,
+      shortDescription,
+      scientistId,
+      image,
+    });
+
     await newDiscovery.save();
 
     res.status(201).json({
@@ -90,6 +106,7 @@ export const createDiscovery = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 /**
  * UPDATE discovery
