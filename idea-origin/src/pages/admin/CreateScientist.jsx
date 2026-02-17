@@ -2,6 +2,49 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+// Reusable dynamic array input component
+function ArrayInput({ label, values, setValues }) {
+  const handleChange = (index, value) => {
+    const newValues = [...values];
+    newValues[index] = value;
+    setValues(newValues);
+  };
+
+  const addItem = () => setValues([...values, ""]);
+  const removeItem = (index) => setValues(values.filter((_, i) => i !== index));
+
+  return (
+    <div className="mb-4">
+      <h3 className="font-semibold text-cyan-400 mb-2">{label}</h3>
+      {values.map((val, idx) => (
+        <div key={idx} className="flex items-center mb-2">
+          <input
+            type="text"
+            value={val}
+            onChange={(e) => handleChange(idx, e.target.value)}
+            className="flex-1 p-2 rounded border border-gray-500 text-black"
+            placeholder={`Enter ${label} item`}
+          />
+          <button
+            type="button"
+            onClick={() => removeItem(idx)}
+            className="ml-2 text-red-500 font-bold"
+          >
+            ×
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={addItem}
+        className="text-green-500 font-bold mt-1"
+      >
+        + Add {label}
+      </button>
+    </div>
+  );
+}
+
 export default function CreateScientist() {
   const token = localStorage.getItem("token");
 
@@ -15,21 +58,15 @@ export default function CreateScientist() {
     nationality: "",
     born: "",
     died: "",
-    image: null, // file
-    story: [],
-    impact: [],
-    quotes: [],
-    funFacts: [],
+    image: null,
+    story: [""],
+    impact: [""],
+    quotes: [""],
+    funFacts: [""],
   });
 
   const [loading, setLoading] = useState(false);
 
-  // Handle array inputs (comma-separated)
-  const handleArrayChange = (key, value) => {
-    setForm({ ...form, [key]: value.split(",").map((v) => v.trim()) });
-  };
-
-  // Handle file input
   const handleFileChange = (e) => {
     setForm({ ...form, image: e.target.files[0] });
   };
@@ -40,26 +77,19 @@ export default function CreateScientist() {
       setLoading(true);
 
       const formData = new FormData();
-      // Append all fields
-      formData.append("name", form.name);
-      formData.append("field", form.field);
-      formData.append("bio", form.bio);
-      formData.append("tagline", form.tagline);
-      formData.append("description", form.description);
-      formData.append("era", form.era);
-      formData.append("nationality", form.nationality);
-      formData.append("born", form.born);
-      formData.append("died", form.died);
 
-      // Append arrays as JSON strings
-      ["story", "impact", "quotes", "funFacts"].forEach((key) => {
+      // Append simple fields
+      ["name","field","bio","tagline","description","era","nationality","born","died"].forEach(key => {
+        formData.append(key, form[key]);
+      });
+
+      // Append arrays properly
+      ["story", "impact", "quotes", "funFacts"].forEach(key => {
         formData.append(key, JSON.stringify(form[key]));
       });
 
-      // Append image if exists
-      if (form.image) {
-        formData.append("image", form.image);
-      }
+      // Append image if selected
+      if (form.image) formData.append("image", form.image);
 
       await axios.post("http://localhost:5000/api/scientists", formData, {
         headers: {
@@ -69,7 +99,6 @@ export default function CreateScientist() {
       });
 
       alert("Scientist created successfully!");
-
       // Reset form
       setForm({
         name: "",
@@ -82,10 +111,10 @@ export default function CreateScientist() {
         born: "",
         died: "",
         image: null,
-        story: [],
-        impact: [],
-        quotes: [],
-        funFacts: [],
+        story: [""],
+        impact: [""],
+        quotes: [""],
+        funFacts: [""],
       });
     } catch (err) {
       console.error(err);
@@ -101,7 +130,7 @@ export default function CreateScientist() {
 
       <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
         {/* Basic Info */}
-        {["name", "field", "tagline", "era", "nationality", "born", "died"].map((key) => (
+        {["name", "field", "tagline", "era", "nationality", "born", "died"].map(key => (
           <div key={key}>
             <label className="block mb-1 text-white/80 capitalize">{key}</label>
             <input
@@ -114,8 +143,8 @@ export default function CreateScientist() {
           </div>
         ))}
 
-        {/* Bio and Description */}
-        {["bio", "description"].map((key) => (
+        {/* Bio & Description */}
+        {["bio", "description"].map(key => (
           <div key={key}>
             <label className="block mb-1 text-white/80 capitalize">{key}</label>
             <textarea
@@ -128,21 +157,11 @@ export default function CreateScientist() {
           </div>
         ))}
 
-        {/* Arrays */}
-        {["story", "impact", "quotes", "funFacts"].map((key) => (
-          <div key={key}>
-            <label className="block mb-1 text-white/80 capitalize">
-              {key} (comma-separated)
-            </label>
-            <textarea
-              value={form[key].join(", ")}
-              onChange={(e) => handleArrayChange(key, e.target.value)}
-              className="w-full p-2 rounded-md border border-white/20 bg-slate-800 text-white"
-              placeholder={`Enter ${key} separated by commas`}
-              rows={2}
-            />
-          </div>
-        ))}
+        {/* Dynamic Array Inputs */}
+        <ArrayInput label="Story" values={form.story} setValues={(arr) => setForm({...form, story: arr})} />
+        <ArrayInput label="Impact" values={form.impact} setValues={(arr) => setForm({...form, impact: arr})} />
+        <ArrayInput label="Quotes" values={form.quotes} setValues={(arr) => setForm({...form, quotes: arr})} />
+        <ArrayInput label="Fun Facts" values={form.funFacts} setValues={(arr) => setForm({...form, funFacts: arr})} />
 
         {/* Image Upload */}
         <div>
@@ -172,10 +191,10 @@ export default function CreateScientist() {
                 born: "",
                 died: "",
                 image: null,
-                story: [],
-                impact: [],
-                quotes: [],
-                funFacts: [],
+                story: [""],
+                impact: [""],
+                quotes: [""],
+                funFacts: [""],
               })
             }
             className="px-4 py-2 bg-gray-600 rounded-md hover:bg-gray-500"

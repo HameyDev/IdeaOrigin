@@ -14,19 +14,25 @@ export default function ScientistProfile() {
     const fetchData = async () => {
       try {
         // Fetch scientist details
-        const sciRes = await axios.get(`http://localhost:5000/api/scientists/${id}`);
+        const sciRes = await axios.get(
+          `http://localhost:5000/api/scientists/${id}`,
+        );
         const sciData = sciRes.data.data;
 
-        // Convert arrays to single-line strings
-        sciData.story = sciData.story?.join(" ") || "";
-        sciData.impact = sciData.impact?.join(", ") || "";
-        sciData.quotes = sciData.quotes?.join(" | ") || "";
-        sciData.funFacts = sciData.funFacts?.join(", ") || "";
+        console.log(sciData);
+
+        // Keep arrays as arrays
+        sciData.story = sciData.story || [];
+        sciData.impact = sciData.impact || [];
+        sciData.quotes = sciData.quotes || [];
+        sciData.funFacts = sciData.funFacts || [];
 
         setScientist(sciData);
 
         // Fetch discoveries of this scientist
-        const disRes = await axios.get(`http://localhost:5000/api/discoveries/scientist/${id}`);
+        const disRes = await axios.get(
+          `http://localhost:5000/api/discoveries/scientist/${id}`,
+        );
         setDiscoveries(disRes.data.data);
 
         setLoading(false);
@@ -131,9 +137,15 @@ export default function ScientistProfile() {
             <h2 className="text-3xl font-bold text-cyan-400 mb-2">
               Life & Journey
             </h2>
-            <p className="text-gray-300 leading-relaxed text-lg">
-              {scientist.story}
-            </p>
+            <div className="text-gray-300 text-lg space-y-4">
+              {scientist.story.length > 0 ? (
+                scientist.story.map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))
+              ) : (
+                <p>No story available.</p>
+              )}
+            </div>
           </div>
 
           {/* ================= DISCOVERIES ================= */}
@@ -169,7 +181,13 @@ export default function ScientistProfile() {
             <h2 className="text-3xl font-bold text-cyan-400 mb-2">
               Impact & Legacy
             </h2>
-            <p className="text-gray-300 text-lg">{scientist.impact}</p>
+            <div className="text-gray-300 text-lg space-y-2">
+              {scientist.impact.length > 0 ? (
+                scientist.impact.map((item, index) => <p key={index}>{item}</p>)
+              ) : (
+                <p>No impact information available.</p>
+              )}
+            </div>
           </div>
 
           {/* ================= QUOTES ================= */}
@@ -177,7 +195,13 @@ export default function ScientistProfile() {
             <h2 className="text-3xl font-bold text-cyan-400 mb-2">
               Famous Quotes
             </h2>
-            <p className="text-gray-300 text-lg italic">{scientist.quotes}</p>
+            <div className="text-gray-300 text-lg space-y-2">
+              {scientist.quotes.length > 0 ? (
+                scientist.quotes.map((quote, index) => <p key={index}>"{quote}"</p>)
+              ) : (
+                <p>No quotes available.</p>
+              )}
+            </div>
           </div>
 
           {/* ================= FUN FACTS ================= */}
@@ -185,7 +209,13 @@ export default function ScientistProfile() {
             <h2 className="text-3xl font-bold text-emerald-400 mb-2">
               Fun Facts
             </h2>
-            <p className="text-gray-300 text-lg">{scientist.funFacts}</p>
+            <div className="text-gray-300 text-lg space-y-2">
+              {scientist.funFacts.length > 0 ? (
+                scientist.funFacts.map((fact, index) => <p key={index}>{fact}</p>)
+              ) : (
+                <p>No fun facts available.</p>
+              )}
+            </div>
           </div>
 
           {/* ================= CTA ================= */}

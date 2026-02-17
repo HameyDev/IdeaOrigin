@@ -56,6 +56,13 @@ export const createScientist = async (req, res) => {
   try {
     const data = { ...req.body };
 
+    // Parse JSON strings into actual arrays
+    ["story", "impact", "quotes", "funFacts"].forEach((key) => {
+      if (data[key]) {
+        data[key] = JSON.parse(data[key]);
+      }
+    });
+
     // If image uploaded via multer
     if (req.file) {
       data.image = `/uploads/scientists/${req.file.filename}`;
@@ -73,6 +80,7 @@ export const createScientist = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 
 /**
