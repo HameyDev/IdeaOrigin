@@ -93,7 +93,7 @@ export default function ScientistProfile() {
                    transition-all duration-300 "
             >
               <img
-                src={`http://localhost:5000${scientist.image}`}
+                src={`https://ideaoriginbackend.onrender.com${scientist.image}`}
                 crossOrigin="anonymous"
                 alt={scientist.name}
                 className="w-full h-80 object-cover"
