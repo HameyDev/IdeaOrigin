@@ -58,7 +58,7 @@ export default function Auth() {
         }, 1200);
       } else {
         const res = await axios.post(
-          "https://ideaoriginbackend.onrender.com/pi/auth/login",
+          "https://ideaoriginbackend.onrender.com/api/auth/login",
           { email, password }
         );
 
