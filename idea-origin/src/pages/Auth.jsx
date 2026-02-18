@@ -40,7 +40,7 @@ export default function Auth() {
           return;
         }
 
-        await axios.post("http://localhost:5000/api/auth/register", {
+        await axios.post("https://ideaoriginbackend.onrender.com/api/auth/register", {
           name: fullName,
           email,
           password,
@@ -58,7 +58,7 @@ export default function Auth() {
         }, 1200);
       } else {
         const res = await axios.post(
-          "http://localhost:5000/api/auth/login",
+          "https://ideaoriginbackend.onrender.com/pi/auth/login",
           { email, password }
         );
 

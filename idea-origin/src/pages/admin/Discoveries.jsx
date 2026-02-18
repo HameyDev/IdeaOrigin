@@ -22,7 +22,7 @@ export default function Discoveries() {
   // ================= FETCH DISCOVERIES =================
   const fetchDiscoveries = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/discoveries");
+      const res = await axios.get("https://ideaoriginbackend.onrender.com/api/discoveries");
       setDiscoveries(res.data.data);
     } catch (err) {
       console.error(err);
@@ -33,7 +33,7 @@ export default function Discoveries() {
   // ================= FETCH SCIENTISTS =================
   const fetchScientists = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/scientists");
+      const res = await axios.get("https://ideaoriginbackend.onrender.com/api/scientists");
       setScientists(res.data.data);
     } catch (err) {
       console.error(err);
@@ -53,7 +53,7 @@ export default function Discoveries() {
     if (!window.confirm("Delete this discovery?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/discoveries/${id}`, {
+      await axios.delete(`https://ideaoriginbackend.onrender.com/api/discoveries/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -89,7 +89,7 @@ export default function Discoveries() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/discoveries/${editing._id}`,
+        `https://ideaoriginbackend.onrender.com/api/discoveries/${editing._id}`,
         form,
         {
           headers: { Authorization: `Bearer ${token}` },

@@ -20,8 +20,8 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const [sciRes, disRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/scientists"),
-          axios.get("http://localhost:5000/api/discoveries"),
+          axios.get("https://ideaoriginbackend.onrender.com/api/scientists"),
+          axios.get("https://ideaoriginbackend.onrender.com/api/discoveries"),
         ]);
 
         setScientists(sciRes.data.data || []);

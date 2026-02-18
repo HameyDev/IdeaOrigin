@@ -48,7 +48,7 @@ export default function Scientists() {
     const fetchScientists = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5000/api/scientists");
+        const res = await axios.get("https://ideaoriginbackend.onrender.com/api/scientists");
 
         setScientists(res.data.data); // 👈 because you return { success, data }
         setError(null);
@@ -289,7 +289,7 @@ export default function Scientists() {
                 <FeaturedCard
                   key={sci.id}
                   to={`/scientist/${sci._id}`}
-                  image={`http://localhost:5000${sci.image}`}
+                  image={`https://ideaoriginbackend.onrender.com${sci.image}`}
                   title={sci.name}
                   subtitle={sci.field}
                   description={sci.description || "Explore the life, discoveries, and legacy of this scientist."}

@@ -23,7 +23,7 @@ export default function Stories() {
   const fetchStories = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/discovery-stories");
+      const res = await axios.get("https://ideaoriginbackend.onrender.com/api/discovery-stories");
       // ensure discoveryId and scientistId are populated
       setStories(res.data.data || []);
     } catch (err) {
@@ -73,7 +73,7 @@ export default function Stories() {
       };
 
       await axios.put(
-        `http://localhost:5000/api/discovery-stories/${editStory._id}`,
+        `https://ideaoriginbackend.onrender.com/api/discovery-stories/${editStory._id}`,
         payload
       );
 
@@ -90,7 +90,7 @@ export default function Stories() {
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this story?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/discovery-stories/${id}`);
+      await axios.delete(`https://ideaoriginbackend.onrender.com/api/discovery-stories/${id}`);
       toast.success("Story deleted successfully");
       fetchStories();
     } catch (err) {

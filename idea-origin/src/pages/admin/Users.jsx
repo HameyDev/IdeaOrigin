@@ -17,7 +17,7 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/auth/users", {
+      const res = await axios.get("https://ideaoriginbackend.onrender.com/api/auth/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(res.data.users);
@@ -38,7 +38,7 @@ const Users = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
+      await axios.delete(`https://ideaoriginbackend.onrender.com/api/auth/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(users.filter((u) => u._id !== id));
@@ -64,7 +64,7 @@ const Users = () => {
   const saveUserEdit = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/auth/users/${editingUser}`,
+        `https://ideaoriginbackend.onrender.com/api/auth/users/${editingUser}`,
         { name: editName, role: editRole },
         { headers: { Authorization: `Bearer ${token}` } }
       );

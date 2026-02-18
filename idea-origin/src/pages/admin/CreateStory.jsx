@@ -64,7 +64,7 @@ export default function CreateStory() {
   /* ================= FETCH DISCOVERIES ================= */
   const fetchDiscoveries = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/discoveries");
+      const res = await axios.get("https://ideaoriginbackend.onrender.com/api/discoveries");
       setDiscoveries(res.data.data || []);
     } catch (err) {
       toast.error("Failed to load discoveries");
@@ -126,7 +126,7 @@ export default function CreateStory() {
         content: form.content.filter((c) => c.section && c.text),
       };
 
-      await axios.post("http://localhost:5000/api/discovery-stories", payload);
+      await axios.post("https://ideaoriginbackend.onrender.com/api/discovery-stories", payload);
 
       toast.success("Discovery Story Created ✅");
 

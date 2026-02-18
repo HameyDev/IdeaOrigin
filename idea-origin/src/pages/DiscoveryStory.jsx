@@ -13,7 +13,7 @@ export default function DiscoveryStory() {
       try {
         setLoading(true);
         const res = await axios.get(
-          `http://localhost:5000/api/discovery-stories/by-discovery/${id}`
+          `https://ideaoriginbackend.onrender.com/api/discovery-stories/by-discovery/${id}`
         );
         setDiscovery(res.data.data);
       } catch (err) {
@@ -66,7 +66,7 @@ export default function DiscoveryStory() {
           {image && (
             <div className="h-48 sm:h-64 w-full rounded-2xl overflow-hidden mb-8 shadow-lg border border-white/10">
               <img
-                src={`http://localhost:5000${image}`}
+                src={`https://ideaoriginbackend.onrender.com${image}`}
                 alt={disc.title}
                 crossOrigin="anonymous"
                 className="w-full h-full object-cover"

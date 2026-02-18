@@ -81,7 +81,7 @@ export default function Explore() {
     const fetchDiscoveries = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5000/api/discoveries");
+        const res = await axios.get("https://ideaoriginbackend.onrender.com/api/discoveries");
         setDiscoveries(res.data.data || []);
       } catch (err) {
         console.error("Failed to fetch discoveries:", err);
@@ -242,7 +242,7 @@ export default function Explore() {
                   <FeaturedCard
                     key={sci._id}
                     to={`/discovery/${sci._id}`}
-                    image={`http://localhost:5000${sci.image}`}
+                    image={`https://ideaoriginbackend.onrender.com${sci.image}`}
                     title={sci.title}
                     subtitle={sci.field}
                     description={sci.shortDescription}

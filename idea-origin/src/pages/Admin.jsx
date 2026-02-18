@@ -45,7 +45,7 @@ export default function Admin() {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const res = await axios.get("http://localhost:5000/api/auth/users", {
+            const res = await axios.get("https://ideaoriginbackend.onrender.com/api/auth/users", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUsers(res.data.users);
@@ -60,7 +60,7 @@ export default function Admin() {
     const fetchScientists = async () => {
         try {
             setLoadingScientists(true);
-            const res = await axios.get("http://localhost:5000/api/scientists");
+            const res = await axios.get("https://ideaoriginbackend.onrender.com/api/scientists");
             setScientists(res.data.data);
         } catch (err) {
             console.error(err);
@@ -81,7 +81,7 @@ export default function Admin() {
         if (!window.confirm("Are you sure you want to delete this user?")) return;
 
         try {
-            await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
+            await axios.delete(`https://ideaoriginbackend.onrender.com/api/auth/users/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUsers(users.filter((u) => u._id !== id));
@@ -107,7 +107,7 @@ export default function Admin() {
     const saveUserEdit = async () => {
         try {
             const res = await axios.put(
-                `http://localhost:5000/api/auth/users/${editingUser}`,
+                `https://ideaoriginbackend.onrender.com/api/auth/users/${editingUser}`,
                 { name: editName, role: editRole },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -140,7 +140,7 @@ export default function Admin() {
 
             if (editingScientist) {
                 const res = await axios.put(
-                    `http://localhost:5000/api/scientists/${editingScientist}`,
+                    `https://ideaoriginbackend.onrender.com/api/scientists/${editingScientist}`,
                     payload
                 );
 
@@ -151,7 +151,7 @@ export default function Admin() {
                 alert("Scientist updated");
             } else {
                 const res = await axios.post(
-                    "http://localhost:5000/api/scientists",
+                    "https://ideaoriginbackend.onrender.com/api/scientists",
                     payload
                 );
 
@@ -188,7 +188,7 @@ export default function Admin() {
         if (!window.confirm("Delete this scientist?")) return;
 
         try {
-            await axios.delete(`http://localhost:5000/api/scientists/${id}`);
+            await axios.delete(`https://ideaoriginbackend.onrender.com/api/scientists/${id}`);
             setScientists(scientists.filter((s) => s._id !== id));
         } catch (err) {
             console.error(err);

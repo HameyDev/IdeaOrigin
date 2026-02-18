@@ -15,7 +15,7 @@ export default function ScientistProfile() {
       try {
         // Fetch scientist details
         const sciRes = await axios.get(
-          `http://localhost:5000/api/scientists/${id}`,
+          `https://ideaoriginbackend.onrender.com/api/scientists/${id}`,
         );
         const sciData = sciRes.data.data;
 
@@ -31,7 +31,7 @@ export default function ScientistProfile() {
 
         // Fetch discoveries of this scientist
         const disRes = await axios.get(
-          `http://localhost:5000/api/discoveries/scientist/${id}`,
+          `https://ideaoriginbackend.onrender.com/api/discoveries/scientist/${id}`,
         );
         setDiscoveries(disRes.data.data);
 

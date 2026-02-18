@@ -34,7 +34,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       setFullName(user.name);
-      setPreview(user.avatar ? `http://localhost:5000${user.avatar}` : "/avatar.jpg");
+      setPreview(user.avatar ? `https://ideaoriginbackend.onrender.com${user.avatar}` : "/avatar.jpg");
     }
   }, [user]);
 
@@ -56,7 +56,7 @@ export default function Dashboard() {
       if (avatar) formData.append("avatar", avatar);
 
       const res = await axios.put(
-        "http://localhost:5000/api/auth/profile",
+        "https://ideaoriginbackend.onrender.com/api/auth/profile",
         formData,
         {
           headers: {
@@ -69,7 +69,7 @@ export default function Dashboard() {
       // 🔁 Update AuthContext user immediately
       const updatedUser = res.data.user;
       localStorage.setItem("user", JSON.stringify(updatedUser));
-      setPreview(updatedUser.avatar ? `http://localhost:5000${updatedUser.avatar}?t=${Date.now()}` : "/avatar.png");
+      setPreview(updatedUser.avatar ? `https://ideaoriginbackend.onrender.com${updatedUser.avatar}?t=${Date.now()}` : "/avatar.png");
       toast.success("Profile updated successfully!");
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -94,7 +94,7 @@ export default function Dashboard() {
       setPasswordLoading(true);
 
       await axios.put(
-        "http://localhost:5000/api/auth/change-password",
+        "https://ideaoriginbackend.onrender.com/api/auth/change-password",
         {
           currentPassword,
           newPassword,

@@ -16,7 +16,7 @@ const Scientists = () => {
     const fetchScientists = async () => {
         try {
             setLoading(true);
-            const res = await axios.get("http://localhost:5000/api/scientists", {
+            const res = await axios.get("https://ideaoriginbackend.onrender.com/api/scientists", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setScientists(res.data.data || []);
@@ -37,7 +37,7 @@ const Scientists = () => {
         if (!window.confirm("Are you sure you want to delete this scientist?")) return;
 
         try {
-            await axios.delete(`http://localhost:5000/api/scientists/${id}`, {
+            await axios.delete(`https://ideaoriginbackend.onrender.com/api/scientists/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setScientists(scientists.filter((s) => s._id !== id));
@@ -61,7 +61,7 @@ const Scientists = () => {
     const saveEdit = async (updatedScientist) => {
         try {
             const res = await axios.put(
-                `http://localhost:5000/api/scientists/${updatedScientist._id}`,
+                `https://ideaoriginbackend.onrender.com/api/scientists/${updatedScientist._id}`,
                 updatedScientist,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

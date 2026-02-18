@@ -18,7 +18,7 @@ export default function CreateDiscovery() {
   // ================= FETCH SCIENTISTS =================
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/scientists")
+      .get("https://ideaoriginbackend.onrender.com/api/scientists")
       .then((res) => setScientists(res.data.data || []))
       .catch(() => toast.error("Failed to load scientists"));
   }, []);
@@ -46,7 +46,7 @@ export default function CreateDiscovery() {
         if (form[key]) data.append(key, form[key]);
       });
 
-      await axios.post("http://localhost:5000/api/discoveries", data);
+      await axios.post("https://ideaoriginbackend.onrender.com/api/discoveries", data);
 
       toast.success("Discovery Created Successfully 🔥");
 

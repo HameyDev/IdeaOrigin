@@ -91,7 +91,7 @@ export default function CreateScientist() {
       // Append image if selected
       if (form.image) formData.append("image", form.image);
 
-      await axios.post("http://localhost:5000/api/scientists", formData, {
+      await axios.post("https://ideaoriginbackend.onrender.com/api/scientists", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
