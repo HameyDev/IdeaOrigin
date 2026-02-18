@@ -1,15 +1,63 @@
 import { Link } from "react-router-dom";
-import { FeaturedScientists } from "../data/FeaturedScientists";
-import { FamousDiscoveries } from "../data/FamousDiscoveries";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import GradientButton from "../components/GradientButton";
 import CountUp from "../components/CountUp";
 import FeaturedCard from "../components/FeaturedCard";
+import StatCard from "../components/StatCard";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { fadeUp, staggerContainer } from "../animations/scrollAnimations";
+import { motion } from "framer-motion";
+import { fadeUp } from "../animations/scrollAnimations";
 
 export default function Home() {
+  const [scientists, setScientists] = useState([]);
+  const [discoveries, setDiscoveries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ✅ Fetch from backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [sciRes, disRes] = await Promise.all([
+          axios.get("http://localhost:5000/api/scientists"),
+          axios.get("http://localhost:5000/api/discoveries"),
+        ]);
+
+        setScientists(sciRes.data.data || []);
+        setDiscoveries(disRes.data.data || []);
+      } catch (err) {
+        console.error("Home fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // ✅ Stats Data (NO hooks inside map)
+  const stats = [
+    {
+      label: "Great Scientists",
+      value: scientists.length || 0,
+      suffix: "+",
+      desc: "Visionaries who shaped human knowledge",
+    },
+    {
+      label: "Historic Discoveries",
+      value: discoveries.length || 0,
+      suffix: "+",
+      desc: "Ideas that changed the course of science",
+    },
+    {
+      label: "Scientific Fields",
+      value: 10,
+      suffix: "+",
+      desc: "From physics to artificial intelligence",
+    },
+  ];
+
   return (
     <div className="bg-slate-950 text-white">
 
@@ -44,6 +92,7 @@ export default function Home() {
             <GradientButton to="/explore-discovery">
               Explore Stories
             </GradientButton>
+
             <Link
               to="/timeline"
               className="px-12 py-4 border border-cyan-400 rounded-xl text-cyan-400 hover:bg-cyan-400 hover:text-black transition"
@@ -54,86 +103,19 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* VALUE STATS */}
+      {/* STATS */}
       <section className="py-24 bg-gradient-to-b from-slate-950 to-slate-900">
-
         <div className="max-w-6xl mx-auto px-6">
-
-          <motion.div
-            ref={useRef(null)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center"
-          >
-            {[
-              {
-                label: "Great Scientists",
-                value: 60,
-                suffix: "+",
-                desc: "Visionaries who shaped human knowledge",
-              },
-              {
-                label: "Historic Discoveries",
-                value: 120,
-                suffix: "+",
-                desc: "Ideas that changed the course of science",
-              },
-              {
-                label: "Scientific Fields",
-                value: 10,
-                suffix: "+",
-                desc: "From physics to artificial intelligence",
-              },
-            ].map((item) => {
-              const ref = useRef(null);
-              const isInView = useInView(ref, { once: true });
-
-              return (
-                <div
-                  ref={ref}
-                  key={item.label}
-                  className="group relative bg-slate-900/70 backdrop-blur
-                       border border-white/10 rounded-3xl p-10
-                       hover:border-cyan-400
-                       hover:shadow-[0_0_40px_rgba(34,211,238,0.25)]
-                       transition-all duration-300"
-                >
-                  {/* Glow Accent */}
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br
-                            from-cyan-400/10 to-emerald-400/10
-                            opacity-0 group-hover:opacity-100
-                            transition" />
-
-                  <div className="relative z-10">
-                    <h3 className="text-5xl font-extrabold
-                             bg-clip-text text-transparent
-                             bg-gradient-to-r from-cyan-400 to-emerald-400">
-                      <CountUp value={item.value} start={isInView} />
-                      {item.suffix}
-                    </h3>
-
-                    <p className="mt-3 text-lg font-semibold text-white">
-                      {item.label}
-                    </p>
-
-                    <p className="mt-2 text-sm text-gray-400 leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </motion.div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
+            {stats.map((item) => (
+              <StatCard key={item.label} item={item} />
+            ))}
+          </div>
         </div>
-
       </section>
-
 
       {/* FEATURED SCIENTISTS */}
       <section className="py-28 max-w-7xl mx-auto px-6">
-
         <div className="text-center mb-16">
           <h2 className="text-4xl font-extrabold">
             Great Minds Who{" "}
@@ -147,29 +129,28 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 justify-items-center">
-          {FeaturedScientists.slice(0, 4).map((sci) => (
-            <FeaturedCard
-              key={sci.id}
-              to={`/scientist/${sci.id}`}
-              image={sci.image}
-              title={sci.name}
-              badge={sci.title}       // 👈 meaningful line
-              subtitle={sci.field}
-              description={sci.line}
-              cta="View Profile →"
-            />
-          ))}
-        </div>
-
+        {loading ? (
+          <p className="text-center text-gray-400">Loading scientists...</p>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 justify-items-center">
+            {scientists.slice(0, 4).map((sci) => (
+              <FeaturedCard
+                key={sci._id}
+                to={`/scientist/${sci._id}`}
+                image={`http://localhost:5000${sci.image}`}
+                title={sci.name}
+                badge={sci.tagline}
+                subtitle={sci.field}
+                description={sci.description}
+                cta="View Profile →"
+              />
+            ))}
+          </div>
+        )}
       </section>
-
-
-
 
       {/* FEATURED DISCOVERIES */}
       <section className="py-28 bg-slate-900">
-
         <div className="text-center mb-16">
           <h2 className="text-4xl font-extrabold">
             Famous{" "}
@@ -179,45 +160,38 @@ export default function Home() {
           </h2>
 
           <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
-            Breakthrough moments that revolutionized knowledge and changed the <br /> course of human history.
+            Breakthrough moments that revolutionized knowledge and changed the course of human history.
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-10 px-6 justify-items-center">
-          {FamousDiscoveries.slice(0, 4).map((d) => (
-            <FeaturedCard
-              key={d.id}
-              to={`/discovery/${d.id}`}
-              image={d.image}
-              title={d.title}
-              subtitle={`${d.by} • ${d.year}`}
-              description={d.description}
-              cta="Read Story →"
-            />
-          ))}
-        </div>
-
+        {loading ? (
+          <p className="text-center text-gray-400">Loading discoveries...</p>
+        ) : (
+          <div className="max-w-7xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-10 px-6 justify-items-center">
+            {discoveries.slice(0, 4).map((d) => (
+              <FeaturedCard
+                key={d._id}
+                to={`/discovery/${d._id}`}
+                image={`http://localhost:5000${d.image}`}
+                title={d.title}
+                subtitle={`${d.scientistId?.name || "Unknown"} • ${d.year || ""}`}
+                description={d.shortDescription}
+                cta="Read Story →"
+              />
+            ))}
+          </div>
+        )}
       </section>
-
 
       {/* FINAL CTA */}
       <section className="relative py-36 text-center overflow-hidden">
-
-        {/* Background Glow */}
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-950 to-black" />
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[700px]
-                  bg-cyan-400/10 blur-[140px] rounded-full" />
-        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px]
-                  bg-emerald-400/10 blur-[160px] rounded-full" />
 
-        {/* Content */}
         <div className="relative z-10 max-w-3xl mx-auto px-6">
-
           <h2 className="text-5xl md:text-6xl font-extrabold leading-tight">
             Begin Your Journey <br />
             Into{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r
-                       from-cyan-400 to-emerald-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
               Great Ideas
             </span>
           </h2>
@@ -232,11 +206,9 @@ export default function Home() {
               Start Exploring
             </GradientButton>
           </div>
-
         </div>
       </section>
 
-
-    </div >
+    </div>
   );
 }

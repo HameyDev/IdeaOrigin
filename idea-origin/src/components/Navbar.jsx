@@ -11,6 +11,7 @@ export default function Navbar() {
   const [isExploreOpen, setIsExploreOpen] = useState(false);
 
   const { user, isLoggedIn } = useContext(AuthContext);
+  const role = user?.role?.toLowerCase();
 
   return (
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-slate-950 via-teal-950 to-slate-950 backdrop-blur-xl border-b border-white/10 shadow-lg">
@@ -53,30 +54,30 @@ export default function Navbar() {
           <NavLink to="/timeline">Timeline</NavLink>
           <NavLink to="/about">About</NavLink>
 
-          {/* 🔐 AUTH BUTTONS */}
+          {/* 🔐 AUTH */}
           {!isLoggedIn && <NavLink to="/auth">Login</NavLink>}
 
-          {isLoggedIn && (
+          {isLoggedIn && user && (
             <>
-              {/* Normal Dashboard for all users */}
-              
-              {user?.role === "user" && (
+              {/* USER → Gradient Dashboard */}
+              {role === "user" && (
                 <GradientButton to="/dashboard">Dashboard</GradientButton>
               )}
 
-              {user?.role === "admin" && (
+              {/* ADMIN → Normal NavLink Dashboard (like About/Timeline) */}
+              {role === "admin" && (
                 <NavLink to="/dashboard">Dashboard</NavLink>
               )}
 
-              {/* Admin Dashboard only for admins */}
-              {user?.role === "admin" && (
+              {/* ADMIN → Gradient Admin Dashboard */}
+              {role === "admin" && (
                 <GradientButton to="/admin">Admin Dashboard</GradientButton>
               )}
             </>
           )}
         </div>
 
-        {/* MOBILE MENU BUTTON */}
+        {/* MOBILE BUTTON */}
         <div className="md:hidden">
           <button onClick={() => setIsOpen(!isOpen)} className="text-xl text-gray-200">
             {isOpen ? "✖" : "☰"}
@@ -84,19 +85,22 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ================= MOBILE MENU ================= */}
+      {/* ================= MOBILE ================= */}
       {isOpen && (
         <div className="md:hidden bg-slate-950 border-t border-white/10 px-6 pb-6 space-y-4">
           <MobileLink to="/" setIsOpen={setIsOpen}>Home</MobileLink>
           <MobileLink to="/timeline" setIsOpen={setIsOpen}>Timeline</MobileLink>
           <MobileLink to="/about" setIsOpen={setIsOpen}>About</MobileLink>
 
-          {!isLoggedIn && <MobileLink to="/auth" setIsOpen={setIsOpen}>Login</MobileLink>}
+          {!isLoggedIn && (
+            <MobileLink to="/auth" setIsOpen={setIsOpen}>Login</MobileLink>
+          )}
 
-          {isLoggedIn && (
+          {isLoggedIn && user && (
             <>
               <MobileLink to="/dashboard" setIsOpen={setIsOpen}>Dashboard</MobileLink>
-              {user?.role === "admin" && (
+
+              {role === "admin" && (
                 <MobileLink to="/admin" setIsOpen={setIsOpen}>Admin Dashboard</MobileLink>
               )}
             </>
