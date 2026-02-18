@@ -137,7 +137,7 @@ export default function Home() {
               <FeaturedCard
                 key={sci._id}
                 to={`/scientist/${sci._id}`}
-                image={`http://localhost:5000${sci.image}`}
+                image={`https://ideaoriginbackend.onrender.com${sci.image}`}
                 title={sci.name}
                 badge={sci.tagline}
                 subtitle={sci.field}
@@ -172,7 +172,7 @@ export default function Home() {
               <FeaturedCard
                 key={d._id}
                 to={`/discovery/${d._id}`}
-                image={`http://localhost:5000${d.image}`}
+                image={`https://ideaoriginbackend.onrender.com${d.image}`}
                 title={d.title}
                 subtitle={`${d.scientistId?.name || "Unknown"} • ${d.year || ""}`}
                 description={d.shortDescription}
