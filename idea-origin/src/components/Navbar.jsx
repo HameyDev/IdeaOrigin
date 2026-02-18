@@ -85,10 +85,31 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ================= MOBILE ================= */}
+      {/* ================= MOBILE MENU ================= */}
       {isOpen && (
         <div className="md:hidden bg-slate-950 border-t border-white/10 px-6 pb-6 space-y-4">
           <MobileLink to="/" setIsOpen={setIsOpen}>Home</MobileLink>
+
+          {/* Explore Dropdown for Mobile */}
+          <div>
+            <button
+              onClick={() => setIsExploreOpen(!isExploreOpen)}
+              className="w-full text-left text-gray-200"
+            >
+              Explore ▾
+            </button>
+            {isExploreOpen && (
+              <div className="pl-4 mt-2 space-y-2">
+                <MobileLink to="/explore-scientists" setIsOpen={setIsOpen}>
+                  Scientists
+                </MobileLink>
+                <MobileLink to="/explore-discovery" setIsOpen={setIsOpen}>
+                  Discoveries
+                </MobileLink>
+              </div>
+            )}
+          </div>
+
           <MobileLink to="/timeline" setIsOpen={setIsOpen}>Timeline</MobileLink>
           <MobileLink to="/about" setIsOpen={setIsOpen}>About</MobileLink>
 
@@ -101,7 +122,9 @@ export default function Navbar() {
               <MobileLink to="/dashboard" setIsOpen={setIsOpen}>Dashboard</MobileLink>
 
               {role === "admin" && (
-                <MobileLink to="/admin" setIsOpen={setIsOpen}>Admin Dashboard</MobileLink>
+                <MobileLink to="/admin" setIsOpen={setIsOpen}>
+                  Admin Dashboard
+                </MobileLink>
               )}
             </>
           )}
